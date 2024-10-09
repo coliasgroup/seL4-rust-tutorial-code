@@ -28,6 +28,18 @@ impl Handler for HandlerImpl {
         debug_println!("client: notified by {}", channels.display());
 
         if channels.contains(SERVER) {
+            sel4_microkit::with_msg_regs_mut(|msg_regs| {
+                msg_regs[0] = 0xf00d;
+            });
+
+            let msg_info = SERVER.pp_call(MessageInfo::new(0, 1));
+
+            assert_eq!(msg_info.count(), 1);
+
+            sel4_microkit::with_msg_regs(|msg_regs| {
+                assert_eq!(msg_regs[0], 0xf33d);
+            });
+
             debug_println!("client: TEST_PASS");
         }
 
