@@ -7,6 +7,8 @@
 #![no_std]
 #![no_main]
 
+use microkit_shared_memory_common::{RegionB, REGION_A_SIZE};
+
 use sel4_microkit::{
     debug_println, protection_domain, var, Channel, Handler, MessageInfo, NullHandler,
 };
@@ -17,11 +19,21 @@ const SERVER: Channel = Channel::new(13);
 fn init() -> impl Handler {
     debug_println!("client: initializing");
 
-    let region_a = *var!(region_a_vaddr: usize = 0);
-    let region_b = *var!(region_b_vaddr: usize = 0);
+    let region_a = *var!(region_a_vaddr: usize = 0) as *mut [u8; REGION_A_SIZE];
+    let region_b = *var!(region_b_vaddr: usize = 0) as *mut RegionB;
 
     debug_println!("client: region_a = {region_a:#x?}");
     debug_println!("client: region_b = {region_b:#x?}");
+
+    unsafe {
+        (region_a as *mut u8).offset(13).write(37);
+    }
+
+    unsafe {
+        (core::ptr::addr_of!((*region_b).foo) as *mut u8)
+            .offset(1)
+            .write(23);
+    }
 
     let _ = SERVER.pp_call(MessageInfo::default());
 
