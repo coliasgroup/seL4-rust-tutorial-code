@@ -12,4 +12,4 @@ edition = "2021"
 license = "BSD-2-Clause"
 
 [dependencies]
-zerocopy = { version = "0.7.32", features = [ "derive" ] }
+zerocopy = { version = "0.8.7", features = [ "derive" ] }

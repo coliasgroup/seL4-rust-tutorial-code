@@ -108,34 +108,11 @@ RUN set -eux; \
         $common_args \
         sel4-kernel-loader-add-payload;
 
+RUN mkdir -p /opt/microkit/sdk \
+    && curl -L https://github.com/seL4/microkit/releases/download/2.0.1/microkit-sdk-2.0.1-linux-x86-64.tar.gz \
+        | tar -xzf - -C /opt/microkit/sdk --strip-components=1
+
 ENV MICROKIT_SDK=/opt/microkit/sdk
-
-RUN set -eux; \
-    git clone \
-        https://github.com/seL4/microkit.git \
-        --config advice.detachedHead=false; \
-    cd microkit; \
-    git checkout 395cf0e5be489bbd7586b012188fc1f712cd1a57; \
-    git clone \
-        https://github.com/seL4/seL4.git \
-        --config advice.detachedHead=false; \
-    cd seL4; \
-    git checkout 4cae30a6ef166a378d4d23697b00106ce7e4e76f;
-
-RUN set -eux; \
-    cd microkit; \
-    python3 -m venv pyenv; \
-    export PATH=$(realpath ./pyenv/bin):$PATH; \
-    pip install --upgrade pip setuptools wheel; \
-    pip install -r requirements.txt; \
-    python3 build_sdk.py \
-        --sel4 ./seL4 \
-        --tool-target-triple $(uname -m)-unknown-linux-gnu \
-        --skip-docs \
-        --skip-tar; \
-    mkdir $(dirname $MICROKIT_SDK); \
-    mv release/microkit-sdk-* $MICROKIT_SDK; \
-    rm -rf $(pwd);
 
 ARG UID
 ARG GID

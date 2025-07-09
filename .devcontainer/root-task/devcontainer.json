@@ -19,7 +19,10 @@
                 "rust-analyzer.cargo.allTargets": false,
                 "rust-analyzer.linkedProjects": [
                     "workspaces/root-task/Cargo.toml"
-                ]
+                ],
+                "rust-analyzer.cargo.extraEnv": {
+                    "SEL4_PREFIX": "/opt/seL4"
+                }
             }
         }
     }

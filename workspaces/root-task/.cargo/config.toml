@@ -4,8 +4,5 @@
 # SPDX-License-Identifier: BSD-2-Clause
 #
 
-[env]
-SEL4_PREFIX = { value = "/opt/seL4", relative = false }
-
 [build]
-target = "aarch64-sel4"
+target = "aarch64-sel4-unwind"

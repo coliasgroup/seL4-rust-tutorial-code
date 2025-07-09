@@ -21,6 +21,8 @@ $(build_dir):
 microkit_board := qemu_virt_aarch64
 microkit_config := debug
 
+sel4_include_dirs := $(MICROKIT_SDK)/board/$(microkit_board)/$(microkit_config)/include
+
 system_description := $(build_dir)/this.system
 
 $(system_description): | $(build_dir)
@@ -56,6 +58,7 @@ test: test.py simulation-context
 	PYTHONPATH=$(root_dir)/test-utils python3 $< $(qemu_cmd)
 
 common_cargo_args := \
+	--config 'env.SEL4_INCLUDE_DIRS="$(sel4_include_dirs)"' \
 	--target-dir $(build_dir)/target \
 	--artifact-dir $(build_dir)
 

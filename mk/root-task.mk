@@ -55,6 +55,7 @@ test: test.py simulation-context
 	PYTHONPATH=$(root_dir)/test-utils python3 $< $(qemu_cmd)
 
 common_cargo_args := \
+	--config 'env.SEL4_PREFIX="$(sel4_prefix)"' \
 	--target-dir $(build_dir)/target \
 	--artifact-dir $(build_dir)
 

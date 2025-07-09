@@ -19,7 +19,10 @@
                 "rust-analyzer.cargo.allTargets": false,
                 "rust-analyzer.linkedProjects": [
                     "workspaces/microkit/Cargo.toml"
-                ]
+                ],
+                "rust-analyzer.cargo.extraEnv": {
+                    "SEL4_INCLUDE_DIRS": "/opt/microkit/sdk/board/qemu_virt_aarch64/debug/include"
+                }
             }
         }
     }
