@@ -72,13 +72,18 @@ RUN set -eux; \
     cd seL4; \
     git checkout cd6d3b8c25d49be2b100b0608cf0613483a6fffa;
 
+RUN apt-get update -q && \
+    apt-get install -y --no-install-recommends \
+        gcc-aarch64-linux-gnu \
+    && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN set -eux; \
     cd seL4; \
     python3 -m venv pyenv; \
     export PATH=$(realpath ./pyenv/bin):$PATH; \
     pip install tools/python-deps; \
     cmake \
-        -DCROSS_COMPILER_PREFIX=aarch64-none-elf- \
         -DCMAKE_INSTALL_PREFIX=$SEL4_INSTALL_DIR \
         -DKernelPlatform=qemu-arm-virt \
         # TODO further develop kernel loader to make KernelArmHypervisorSupport=ON unecessary
@@ -96,7 +101,7 @@ RUN set -eux; \
     url="https://github.com/seL4/rust-sel4"; \
     rev="1cd063a0f69b2d2045bfa224a36c9341619f0e9b"; \
     common_args="--git $url --rev $rev --root $SEL4_INSTALL_DIR"; \
-    CC_aarch64_unknown_none=aarch64-none-elf-gcc \
+    CC_aarch64_unknown_none=aarch64-linux-gnu-gcc \
     SEL4_PREFIX=$SEL4_INSTALL_DIR \
         cargo install \
             -Z build-std=core,compiler_builtins \
