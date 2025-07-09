@@ -6,10 +6,11 @@
 
 use core::ptr;
 
-use sel4_dlmalloc::{StaticDlmallocGlobalAlloc, StaticHeap};
+use one_shot_mutex::sync::RawOneShotMutex;
+
+use sel4_dlmalloc::{StaticDlmalloc, StaticHeap};
 use sel4_panicking::catch_unwind;
 use sel4_panicking_env::abort;
-use sel4_sync::PanickingRawMutex;
 
 use crate::main;
 
@@ -24,37 +25,22 @@ const HEAP_SIZE: usize = 1024 * 64;
 static STATIC_HEAP: StaticHeap<HEAP_SIZE> = StaticHeap::new();
 
 #[global_allocator]
-static GLOBAL_ALLOCATOR: StaticDlmallocGlobalAlloc<
-    PanickingRawMutex,
-    &'static StaticHeap<HEAP_SIZE>,
-> = StaticDlmallocGlobalAlloc::new(PanickingRawMutex::new(), &STATIC_HEAP);
+static GLOBAL_ALLOCATOR: StaticDlmalloc<RawOneShotMutex> =
+    StaticDlmalloc::new(STATIC_HEAP.bounds());
 
 sel4_panicking_env::register_debug_put_char!(sel4::debug_put_char);
 
-#[no_mangle]
-unsafe extern "C" fn sel4_runtime_rust_entry() -> ! {
-    unsafe extern "C" fn cont_fn(_cont_arg: *mut sel4_runtime_common::ContArg) -> ! {
-        inner_entry()
-    }
+sel4_runtime_common::declare_entrypoint! {
+    () -> ! {
+        unsafe {
+            sel4::set_ipc_buffer(get_ipc_buffer().as_mut().unwrap());
+        }
 
-    sel4_runtime_common::initialize_tls_on_stack_and_continue(cont_fn, ptr::null_mut())
-}
-
-fn inner_entry() -> ! {
-    #[cfg(panic = "unwind")]
-    {
-        sel4_runtime_common::set_eh_frame_finder().unwrap();
-    }
-
-    unsafe {
-        sel4::set_ipc_buffer(get_ipc_buffer().as_mut().unwrap());
-        sel4_runtime_common::run_ctors();
-    }
-
-    match catch_unwind(main) {
-        #[allow(unreachable_patterns)]
-        Ok(never) => never,
-        Err(_) => abort!("main() panicked"),
+        match catch_unwind(main) {
+            #[allow(unreachable_patterns)]
+            Ok(never) => never,
+            Err(_) => abort!("main() panicked"),
+        }
     }
 }
 
