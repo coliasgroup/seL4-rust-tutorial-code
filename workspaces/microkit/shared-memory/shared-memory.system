@@ -15,14 +15,14 @@
         <map mr="region_b" vaddr="0x2_400_000" perms="rw" cached="true" setvar_vaddr="region_b_vaddr" />
     </protection_domain>
 
-    <protection_domain name="server" priority="200" pp="true">
+    <protection_domain name="server" priority="200">
         <program_image path="microkit-shared-memory-server.elf" />
         <map mr="region_a" vaddr="0x2_000_000" perms="r" cached="true" setvar_vaddr="region_a_vaddr" />
         <map mr="region_b" vaddr="0x2_400_000" perms="r" cached="true" setvar_vaddr="region_b_vaddr" />
     </protection_domain>
 
     <channel>
-        <end pd="client" id="13" />
+        <end pd="client" id="13" pp="true" />
         <end pd="server" id="37" />
     </channel>
 </system>
