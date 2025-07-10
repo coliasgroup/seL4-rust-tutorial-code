@@ -55,8 +55,6 @@ RUN curl -sSf https://sh.rustup.rs | \
 
 ENV PATH=/root/.cargo/bin:$PATH
 
-RUN cargo install mdbook@0.4.36
-
 ENV SEL4_INSTALL_DIR=/opt/seL4
 
 RUN set -eux; \
@@ -141,6 +139,8 @@ RUN set -eux; \
     fi;
 
 ENV PATH=/home/x/.cargo/bin:$PATH
+
+RUN cargo install mdbook@0.4.36
 
 ENV SHELL=/bin/bash
 
