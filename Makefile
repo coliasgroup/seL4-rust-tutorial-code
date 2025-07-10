@@ -82,11 +82,15 @@ exported_rustdoc_dir := $(build_dir)/exported-rustdoc
 
 .PHONY: exported-rustdoc
 exported-rustdoc: rustdoc | $(build_dir)
-	rsync -a --delete $(rustdoc_dir)/ $(exported_rustdoc_dir)/ \
+	rsync -a \
+		--delete \
+		--delete-excluded \
+		$(rustdoc_dir)/ $(exported_rustdoc_dir)/ \
 		--exclude '/*/debug' \
 		--exclude '/*/*/debug' \
 		--exclude '/*/.*.json' \
-		--exclude '/*/CACHEDIR.TAG'
+		--exclude '/**/CACHEDIR.TAG' \
+		--exclude '/**/.lock'
 
 .PHONY: clean-rustdoc
 clean-rustdoc:
