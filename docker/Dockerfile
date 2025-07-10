@@ -85,7 +85,7 @@ RUN set -eux; \
 
 RUN set -eux; \
     url="https://github.com/seL4/rust-sel4"; \
-    rev="1cd063a0f69b2d2045bfa224a36c9341619f0e9b"; \
+    rev="d2bc5cf71c5455f85898a4768e9dcbaea39e1a7e"; \
     common_args="--git $url --rev $rev --root $SEL4_INSTALL_DIR"; \
     CC_aarch64_unknown_none=aarch64-linux-gnu-gcc \
     SEL4_PREFIX=$SEL4_INSTALL_DIR \
