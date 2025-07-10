@@ -7,7 +7,9 @@
 #![no_std]
 #![no_main]
 
-use sel4_microkit::{debug_println, protection_domain, Channel, Handler, Infallible, MessageInfo};
+use sel4_microkit::{
+    debug_println, protection_domain, Channel, ChannelSet, Handler, Infallible, MessageInfo,
+};
 
 const SERVER: Channel = Channel::new(13);
 
@@ -22,10 +24,12 @@ struct HandlerImpl;
 impl Handler for HandlerImpl {
     type Error = Infallible;
 
-    fn notified(&mut self, channel: Channel) -> Result<(), Self::Error> {
-        debug_println!("client: notified by {:?}", channel);
+    fn notified(&mut self, channels: ChannelSet) -> Result<(), Self::Error> {
+        debug_println!("client: notified by {}", channels.display());
 
-        debug_println!("client: TEST_PASS");
+        if channels.contains(SERVER) {
+            debug_println!("client: TEST_PASS");
+        }
 
         Ok(())
     }
