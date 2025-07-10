@@ -72,12 +72,6 @@ rustdoc: | $(build_dir)
 	$(foreach workspace,$(workspaces), \
 		$(MAKE) -C workspaces/$(workspace) $@ TARGET_DIR=$(abspath $(rustdoc_dir)/$(workspace);))
 
-.PHONY: prune-rustdoc
-prune-rustdoc:
-	set -eu; \
-	cd $(rustdoc_dir); \
-	rm -rf */debug */*/debug
-
 exported_rustdoc_dir := $(build_dir)/exported-rustdoc
 
 .PHONY: exported-rustdoc
