@@ -25,8 +25,7 @@ examples := \
     root-task/spawn-task \
     microkit/hello-world \
     microkit/ipc \
-    microkit/shared-memory \
-    microkit/banscii
+    microkit/shared-memory
 
 .PHONY: clean-each-example test-each-example
 clean-each-example test-each-example:
