@@ -7,7 +7,9 @@
 #![no_std]
 #![no_main]
 
-use sel4_microkit::{debug_println, protection_domain, var, Channel, Handler, Infallible};
+use sel4_microkit::{
+    debug_println, protection_domain, var, Channel, Handler, MessageInfo, NullHandler,
+};
 
 const SERVER: Channel = Channel::new(13);
 
@@ -21,14 +23,9 @@ fn init() -> impl Handler {
     debug_println!("client: region_a = {region_a:#x?}");
     debug_println!("client: region_b = {region_b:#x?}");
 
-    HandlerImpl { region_a, region_b }
-}
+    let _ = SERVER.pp_call(MessageInfo::default());
 
-struct HandlerImpl {
-    region_a: usize,
-    region_b: usize,
-}
+    debug_println!("TEST_PASS");
 
-impl Handler for HandlerImpl {
-    type Error = Infallible;
+    NullHandler::new()
 }

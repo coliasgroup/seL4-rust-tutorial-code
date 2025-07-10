@@ -8,7 +8,7 @@
 #![no_main]
 
 use sel4_microkit::{
-    debug_println, protection_domain, var, Channel, ChannelSet, Handler, Infallible,
+    debug_println, protection_domain, var, Channel, Handler, Infallible, MessageInfo,
 };
 
 const CLIENT: Channel = Channel::new(37);
@@ -33,4 +33,14 @@ struct HandlerImpl {
 
 impl Handler for HandlerImpl {
     type Error = Infallible;
+
+    fn protected(
+        &mut self,
+        channel: Channel,
+        _msg_info: MessageInfo,
+    ) -> Result<MessageInfo, Self::Error> {
+        assert_eq!(channel, CLIENT);
+
+        Ok(MessageInfo::default())
+    }
 }
