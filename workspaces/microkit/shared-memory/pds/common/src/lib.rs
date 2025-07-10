@@ -6,12 +6,12 @@
 
 #![no_std]
 
-use zerocopy::{AsBytes, FromBytes, FromZeroes};
+use zerocopy::{FromBytes, IntoBytes};
 
 pub const REGION_A_SIZE: usize = 1337;
 
 #[repr(C)]
-#[derive(AsBytes, FromBytes, FromZeroes)]
+#[derive(IntoBytes, FromBytes)]
 pub struct RegionB {
     pub field_1: u64,
     pub foo: [u16; 16],
