@@ -61,18 +61,16 @@ update:
 	$(foreach workspace,$(workspaces), \
 		(cd workspaces/$(workspace) && cargo update);)
 
+.PHONY: check-step
+check-step: fmt-check test
+
 rustdoc_dir := $(build_dir)/rustdoc
 
 .PHONY: rustdoc
-rustdoc: 
+rustdoc: | $(build_dir)
 	set -eu; \
 	$(foreach workspace,$(workspaces), \
-		(cd workspaces/$(workspace) && \
-			cargo doc --target-dir $(abspath $(rustdoc_dir)/$(workspace)));)
-
-.PHONY: clean-rustdoc
-clean-rustdoc:
-	rm -rf $(rustdoc_dir)
+		$(MAKE) -C workspaces/$(workspace) $@ TARGET_DIR=$(abspath $(rustdoc_dir)/$(workspace);))
 
 .PHONY: prune-rustdoc
 prune-rustdoc:
@@ -80,17 +78,16 @@ prune-rustdoc:
 	cd $(rustdoc_dir); \
 	rm -rf */debug */*/debug
 
-.PHONY: check-step
-check-step: fmt-check test
+exported_rustdoc_dir := $(build_dir)/exported-rustdoc
 
-# exported_rustdoc_dir := $(build_dir)/exported-rustdoc
+.PHONY: exported-rustdoc
+exported-rustdoc: rustdoc | $(build_dir)
+	rsync -a --delete $(rustdoc_dir)/ $(exported_rustdoc_dir)/ \
+		--exclude '/*/debug' \
+		--exclude '/*/*/debug' \
+		--exclude '/*/.*.json' \
+		--exclude '/*/CACHEDIR.TAG'
 
-# .PHONY: exported-rustdoc
-# exported-rustdoc: rustdoc | $(build_dir)
-# 	rm -rf $(exported_rustdoc_dir)
-# 	time rsync -av $(rustdoc_dir)/ $(exported_rustdoc_dir)/ \
-# 		--info=progress2 --info=name0 \
-# 		--exclude '/*/debug' \
-# 		--exclude '/*/*/debug' \
-# 		--exclude '/*/.*.json' \
-# 		--exclude '/*/CACHEDIR.TAG'
+.PHONY: clean-rustdoc
+clean-rustdoc:
+	rm -rf $(rustdoc_dir) $(exported_rustdoc_dir)
