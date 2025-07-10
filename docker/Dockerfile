@@ -13,6 +13,7 @@ RUN apt-get update -q && \
         git \
         rsync \
         # for seL4
+        gcc-aarch64-linux-gnu \
         python3-dev \
         python3-venv \
         cmake \
@@ -26,6 +27,8 @@ RUN apt-get update -q && \
         python3-pexpect \
         python3-requests \
         # for book
+        libssl-dev \
+        pkg-config \
         linkchecker \
         # for hacking
         bash-completion \
@@ -41,15 +44,6 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
-
-RUN set -eux; \
-    host=$(uname -m); \
-    url="https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-$host-aarch64-none-elf.tar.xz"; \
-    dst=/opt/gcc-aarch64-none-elf; \
-    mkdir -p $dst; \
-    curl -sSfL "$url" | tar -xJ -C $dst --strip-components=1;
-
-ENV PATH=/opt/gcc-aarch64-none-elf/bin:$PATH
 
 ARG RUSTUP_CHANNEL
 
@@ -71,12 +65,6 @@ RUN set -eux; \
         --config advice.detachedHead=false; \
     cd seL4; \
     git checkout cd6d3b8c25d49be2b100b0608cf0613483a6fffa;
-
-RUN apt-get update -q && \
-    apt-get install -y --no-install-recommends \
-        gcc-aarch64-linux-gnu \
-    && \
-    rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
     cd seL4; \
