@@ -34,11 +34,8 @@ clean-each-example test-each-example:
 		$(MAKE) -C workspaces/$(example) $(subst -each-example,,$@);)
 
 .PHONY: clean
-clean:
+clean: clean-each-example
 	rm -rf $(build_dir)
-
-.PHONY: clean-all
-clean-all: clean clean-each-example
 
 .PHONY: test
 test: test-each-example
@@ -85,7 +82,3 @@ exported-rustdoc: rustdoc | $(build_dir)
 		--exclude '/*/.*.json' \
 		--exclude '/**/CACHEDIR.TAG' \
 		--exclude '/**/.lock'
-
-.PHONY: clean-rustdoc
-clean-rustdoc:
-	rm -rf $(rustdoc_dir) $(exported_rustdoc_dir)
