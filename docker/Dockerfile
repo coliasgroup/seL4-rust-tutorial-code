@@ -11,6 +11,7 @@ RUN apt-get update -q && \
         build-essential \
         curl \
         git \
+        unzip \
         rsync \
         # for seL4
         gcc-aarch64-linux-gnu \
@@ -62,7 +63,7 @@ RUN set -eux; \
         https://github.com/seL4/seL4.git \
         --config advice.detachedHead=false; \
     cd seL4; \
-    git checkout cd6d3b8c25d49be2b100b0608cf0613483a6fffa;
+    git checkout fdf7f2a0823330615dfb6b3ae6706403217e74ea;
 
 RUN set -eux; \
     cd seL4; \
@@ -85,7 +86,7 @@ RUN set -eux; \
 
 RUN set -eux; \
     url="https://github.com/seL4/rust-sel4"; \
-    rev="d2bc5cf71c5455f85898a4768e9dcbaea39e1a7e"; \
+    rev="027e3eb33327a8dc69df4cd517694295e80574f3"; \
     common_args="--git $url --rev $rev --root $SEL4_INSTALL_DIR"; \
     CC_aarch64_unknown_none=aarch64-linux-gnu-gcc \
     SEL4_PREFIX=$SEL4_INSTALL_DIR \
@@ -99,11 +100,18 @@ RUN set -eux; \
         $common_args \
         sel4-kernel-loader-add-payload;
 
-RUN mkdir -p /opt/microkit/sdk \
-    && curl -L https://github.com/seL4/microkit/releases/download/2.0.1/microkit-sdk-2.0.1-linux-x86-64.tar.gz \
-        | tar -xzf - -C /opt/microkit/sdk --strip-components=1
-
 ENV MICROKIT_SDK=/opt/microkit/sdk
+
+RUN set -eux; \
+    mkdir -p $MICROKIT_SDK; \
+    cd $MICROKIT_SDK; \
+    curl -L \
+        "https://productionresultssa7.blob.core.windows.net/actions-results/797488c0-ac6a-4563-9d54-6f671ce673bd/workflow-job-run-b3b4c29a-375e-5034-871e-29135961456d/artifacts/edb0f20b7f086e40497fc5608d28b2b7b4fcc064e2edb84a9949250914ecbc03.zip?rscd=attachment%3B+filename%3D%22microkit-sdk-2.0.1-dev.160%2Ba7f037c-linux-x86-64.zip%22&se=2025-11-21T11%3A23%3A01Z&sig=IxPgp7f%2Bb6YgGeUrXuqLM3PRCVK42Zu14X8Qd3e4BoI%3D&ske=2025-11-21T21%3A10%3A00Z&skoid=ca7593d4-ee42-46cd-af88-8b886a2f84eb&sks=b&skt=2025-11-21T09%3A10%3A00Z&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skv=2025-11-05&sp=r&spr=https&sr=b&st=2025-11-21T11%3A12%3A56Z&sv=2025-11-05" \
+        -o sdk.zip; \
+    unzip sdk.zip; \
+    tar -xzf microkit-sdk-*.tar.gz --strip-components=1; \
+    chmod -R a+X . # HACK \
+    rm sdk.zip;
 
 ARG UID
 ARG GID
