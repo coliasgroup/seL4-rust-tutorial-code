@@ -5,4 +5,4 @@
 #
 
 [build]
-target = "aarch64-sel4-unwind"
+target = "aarch64-sel4-roottask-unwind"
