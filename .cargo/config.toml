@@ -7,6 +7,9 @@
 [env]
 RUST_TARGET_PATH = { value = "target-specs", relative = true }
 
+[build]
+rustflags = ["-Zunstable-options"] # for custom target specs
+
 [unstable]
 unstable-options = true
 build-std = ["core", "alloc", "compiler_builtins"]
