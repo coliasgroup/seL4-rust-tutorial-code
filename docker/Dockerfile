@@ -57,7 +57,7 @@ ENV PATH=/root/.cargo/bin:$PATH
 
 ENV SEL4_INSTALL_DIR=/opt/seL4
 
-RUN git clone --branch 14.0.0 https://github.com/seL4/seL4.git
+RUN git clone --branch 15.0.0 https://github.com/seL4/seL4.git
 
 RUN set -eux; \
     cd seL4; \
@@ -84,14 +84,14 @@ RUN set -eux; \
     mkdir -p $MICROKIT_SDK; \
     cd $MICROKIT_SDK; \
     curl -L \
-        "https://github.com/seL4/microkit/releases/download/2.1.0/microkit-sdk-2.1.0-linux-x86-64.tar.gz" \
+        "https://github.com/seL4/microkit/releases/download/2.2.0/microkit-sdk-2.2.0-linux-x86-64.tar.gz" \
             | tar -xzf - --strip-components=1; \
     chmod -R a+X . # HACK \
     rm sdk.zip;
 
 RUN set -eux; \
     url="https://github.com/seL4/rust-sel4"; \
-    rev="2c9786744900433f37e803c25ab208835a802cf3"; \
+    rev="7a2321f2d84310ba7a09fe7f5988e6dcecde3566"; \
     common_args="--git $url --rev $rev --root $SEL4_INSTALL_DIR"; \
     CC_aarch64_unknown_none=aarch64-linux-gnu-gcc \
     SEL4_PREFIX=$SEL4_INSTALL_DIR \
